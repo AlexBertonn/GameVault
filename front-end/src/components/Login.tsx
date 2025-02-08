@@ -10,15 +10,12 @@ import React, { useState } from "react";
     function isEmail(value: string): boolean {
         return value.includes('@');
     }
-    function isNotEmpty(value: string): boolean {
-        return value.trim() !== '';
-    }
     function hasMinLength(value: string, minLength: number): boolean {
         return value.length >= minLength;
     }
 
 
-export const Signup = () => {
+export const Login = () => {
 
     const [formData, setFormData] = useState<FormState>({
         email: '',
@@ -98,4 +95,4 @@ export const Signup = () => {
   </Card.Root>
   )
 }
-export default Signup;
+export default Login;
