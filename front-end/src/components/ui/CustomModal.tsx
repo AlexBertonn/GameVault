@@ -1,32 +1,37 @@
-import { Button, Card, Input, Stack } from "@chakra-ui/react"
-import { Field } from "@/components/ui/field"
-import InputField from './InputField.tsx'
+import { Button, Card, Stack } from "@chakra-ui/react";
+import { ReactNode } from "react";
 
 type ModalProps = {
-  title: string,
-  message: string,
-}
+  title: string;
+  message: string;
+  children: ReactNode; 
+  onSubmit: () => void; 
+  footerButtons?: ReactNode;
+  onClose: () => void;
+};
 
-export const CustomModal = ({title, message,}: ModalProps) => {
+export const CustomModal = ({ title, message, children, onSubmit, onClose, footerButtons }: ModalProps) => {
+  return (
+    <Card.Root w="md">
+      <Card.Header>
+        <Card.Title>{title}</Card.Title>
+        <Card.Description>{message}</Card.Description>
+      </Card.Header>
+      <Card.Body>
+        <Stack gap="4" w="full">
+          {children} 
+        </Stack>
+      </Card.Body>
+      <Card.Footer justifyContent="flex-end">
+        {footerButtons || (
+            <>
+              <Button variant="outline" onClick={onClose}/>
+              <Button variant="solid" onClick={onSubmit} />
+            </>
+          )}
+      </Card.Footer>
+    </Card.Root>
+  );
+};
 
-    return (
-      <Card.Root w="md">
-        <Card.Header>
-          <Card.Title>{title}</Card.Title>
-          <Card.Description>
-            {message}
-          </Card.Description>
-        </Card.Header>
-        <Card.Body>
-          <Stack gap="4" w="full">
-              <InputField label="Nome" type="text" id="id" />
-              <InputField label="Sobre-nome" type="text" id="id" />
-          </Stack>
-        </Card.Body>
-        <Card.Footer justifyContent="flex-end">
-          <Button variant="outline">Cancel</Button>
-          <Button variant="solid">Sign in</Button>
-        </Card.Footer>
-      </Card.Root>
-)}
 export default CustomModal;

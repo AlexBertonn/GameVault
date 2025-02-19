@@ -1,5 +1,5 @@
 import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
-import Inputs from "./ui/InputField.tsx";  // Importe o seu componente 'Inputs'
+import InputField from "./ui/InputField.tsx";  // Importe o seu componente 'Inputs'
 import { useState } from "react";
 
 interface FormState {
@@ -64,7 +64,7 @@ export const Login = () => {
         </Heading>
         <Stack as="form" onSubmit={handleSubmit}>
           <Box textAlign="left">
-            <Inputs
+            <InputField
               label="E-mail"
               id="email"
               type="email"
@@ -75,7 +75,7 @@ export const Login = () => {
           </Box>
 
           <Box textAlign="left">
-            <Inputs
+            <InputField
               label="Senha"
               id="password"
               type="password"
