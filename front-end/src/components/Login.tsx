@@ -1,18 +1,13 @@
 import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
-import InputField from "./ui/InputField.tsx";  // Importe o seu componente 'Inputs'
+import InputField from "./ui/InputField.tsx";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isEmail, hasMinLength } from "../validation/user-validation.ts";
+import axios from "axios";
 
 interface FormState {
   email: string;
   password: string;
-}
-
-// Funções de validação
-function isEmail(value: string): boolean {
-  return value.includes("@");
-}
-function hasMinLength(value: string, minLength: number): boolean {
-  return value.length >= minLength;
 }
 
 export const Login = () => {
@@ -22,6 +17,7 @@ export const Login = () => {
   });
 
   const [error, setError] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -52,13 +48,34 @@ export const Login = () => {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (validateFormData()) {
-      console.log("Login bem-sucedido:", formData);
+      setIsLoading(true);
+      axios
+        .post("http://localhost:8080/auth/login", formData)
+        .then((response) => {
+          const { token } = response.data;
+          localStorage.setItem("token", token);
+          navigate("/gamespage");
+        })
+        .catch((error) => {
+          if (error.response) {
+            setError({ ...error, auth: "E-mail ou senha incorretos." });
+          }
+          setError({ ...error, auth: "Falha ao realizar login." });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }
 
+  const navigate = useNavigate();
+  const handleSignupClick = () => {
+    navigate("/signup");
+  };
+
   return (
     <Flex minH="100vh" align="center" justify="center">
-      <Box  p={8} boxShadow="sm" borderRadius="md" w="md" bg="#141414">
+      <Box p={8} boxShadow="sm" borderRadius="md" w="md" bg="#141414">
         <Heading size="lg" textAlign="left" mb={6}>
           Login
         </Heading>
@@ -71,7 +88,11 @@ export const Login = () => {
               value={formData.email}
               onChange={handleInputChange}
             />
-            {error.email && <Text color="red.500" fontSize="sm">{error.email}</Text>}
+            {error.email && (
+              <Text color="red.500" fontSize="sm">
+                {error.email}
+              </Text>
+            )}
           </Box>
 
           <Box textAlign="left">
@@ -82,12 +103,23 @@ export const Login = () => {
               value={formData.password}
               onChange={handleInputChange}
             />
-            {error.password && <Text color="red.500" fontSize="sm">{error.password}</Text>}
+            {error.password && (
+              <Text color="red.500" fontSize="sm">
+                {error.password}
+              </Text>
+            )}
           </Box>
 
           <Stack direction="row" justify="space-between" mt={4}>
-            <Button variant="outline">Registrar-se</Button>
-            <Button variant="solid"  type="submit">
+            <Button variant="outline" onClick={handleSignupClick}>
+              Registrar-se
+            </Button>
+            <Button
+              variant="solid"
+              type="submit"
+              loading={isLoading}
+              loadingText="Entrando..."
+            >
               Entrar
             </Button>
           </Stack>

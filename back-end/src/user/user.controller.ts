@@ -14,12 +14,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { Public } from 'src/auth/public.decorator';
+import { AuthService } from '../auth/auth.service'; 
+import { LoginDto } from './dto/login.dto';
 
 @Controller('user')
 @UseGuards(JwtGuard)
 @ApiBearerAuth('Authorization')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
   @Post()
   @Public()
@@ -52,5 +54,13 @@ export class UserController {
   @ApiOperation({ summary: 'Delete a user by id' })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
+  }
+
+  @Post('login')
+  @Public()
+  @ApiBody({ type: LoginDto })
+  @ApiOperation({ summary: 'Login a user' })
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.signIn(loginDto.email, loginDto.password); 
   }
 }

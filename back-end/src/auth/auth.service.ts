@@ -14,11 +14,13 @@ export class AuthService {
   async signIn(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
-        throw new UnauthorizedException();
+        console.log(`User not found: ${email}`);
+        throw new UnauthorizedException('Usuário não encontrado.');
     }
     const validate = await bcrypt.compare(pass, user.password);
     if (!validate) {
-      throw new UnauthorizedException();
+      console.log(`Invalid password attempt for user: ${email}`);
+      throw new UnauthorizedException('Senha incorreta.');
     }
         const payload = { email: user.email, sub: user.id };
         const accessToken = this.jwtService.sign(payload);

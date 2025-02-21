@@ -1,26 +1,20 @@
 import { Button, Box, Stack, Text, Flex, Heading } from "@chakra-ui/react";
-import InputField from "./ui/InputField.tsx"; 
+import InputField from "./ui/InputField.tsx";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  isEmail,
+  isNotEmpty,
+  hasMinLength,
+  isEqualToOtherValue,
+} from "../validation/user-validation.ts";
 
 interface FormState {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
-}
-
-// Funções de validação
-function isEmail(value: string): boolean {
-  return value.includes("@");
-}
-function isNotEmpty(value: string): boolean {
-  return value.trim() !== "";
-}
-function hasMinLength(value: string, minLength: number): boolean {
-  return value.length >= minLength;
-}
-function isEqualToOtherValue(value: string, otherValue: string): boolean {
-  return value === otherValue;
 }
 
 export const Signup = () => {
@@ -67,12 +61,33 @@ export const Signup = () => {
     return Object.keys(errorMessages).length === 0;
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+
     if (validateFormData()) {
-      console.log("Cadastro bem-sucedido:", formData);
+      try{
+        const response = await axios.post('http://localhost:8080/user', {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        })
+        console.log('Cadastrado:', response.data);
+        navigate('/login')
+      } catch(errors){
+        console.error('Erro ao cadastrar:', errors);
+        setError({
+          ...error,
+          email: 'Erro ao cadastrar, teste novamente.'
+        })
+      }
     }
   }
+
+  //ROTAS AQUI
+  const navigate = useNavigate();
+  const handleCancelClick = () => {
+    navigate("/");
+  };
 
   return (
     <Flex minH="100vh" align="center" justify="center">
@@ -83,7 +98,7 @@ export const Signup = () => {
         <Text fontSize="md" mb={4} textAlign="left">
           Preencha os campos abaixo para criar sua conta.
         </Text>
-        <Stack as="form" onSubmit={handleSubmit} >
+        <Stack as="form" onSubmit={handleSubmit}>
           <Box textAlign="left">
             <InputField
               label="Nome"
@@ -92,7 +107,11 @@ export const Signup = () => {
               value={formData.name}
               onChange={handleInputChange}
             />
-            {error.name && <Text color="red.500" fontSize="sm">{error.name}</Text>}
+            {error.name && (
+              <Text color="red.500" fontSize="sm">
+                {error.name}
+              </Text>
+            )}
           </Box>
 
           <Box textAlign="left">
@@ -103,7 +122,11 @@ export const Signup = () => {
               value={formData.email}
               onChange={handleInputChange}
             />
-            {error.email && <Text color="red.500" fontSize="sm">{error.email}</Text>}
+            {error.email && (
+              <Text color="red.500" fontSize="sm">
+                {error.email}
+              </Text>
+            )}
           </Box>
 
           <Box textAlign="left">
@@ -114,7 +137,11 @@ export const Signup = () => {
               value={formData.password}
               onChange={handleInputChange}
             />
-            {error.password && <Text color="red.500" fontSize="sm">{error.password}</Text>}
+            {error.password && (
+              <Text color="red.500" fontSize="sm">
+                {error.password}
+              </Text>
+            )}
           </Box>
 
           <Box textAlign="left">
@@ -126,12 +153,18 @@ export const Signup = () => {
               onChange={handleInputChange}
             />
             {error.confirmPassword && (
-              <Text color="red.500" fontSize="sm">{error.confirmPassword}</Text>
+              <Text color="red.500" fontSize="sm">
+                {error.confirmPassword}
+              </Text>
             )}
           </Box>
 
           <Stack direction="row" justify="space-between" mt={4}>
-            <Button variant="outline" colorScheme="teal" onClick={() => console.log('Cancelar')}>
+            <Button
+              variant="outline"
+              colorScheme="teal"
+              onClick={handleCancelClick}
+            >
               Cancelar
             </Button>
             <Button variant="solid" colorScheme="blue" type="submit">

@@ -1,19 +1,21 @@
-import './App.css'
-import Signup from './components/Signup.tsx'
-import Login from './components/Login.tsx'
-import CustomModal from './components/ui/CustomModal.tsx'
-import NewGameCard from './components/NewGameCard.tsx'
-import EditGameCard from './components/EditGameCard.tsx'
-import GamePage from './components/GamePage.tsx'
-
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Signup from "./components/Signup.tsx";
+import Login from "./components/Login.tsx";
+import Home from "./components/Home.tsx";
+import GamesPage from "./components/GamesPage.tsx";
 
 function App() {
   return (
-    <>
-      <GamePage/>
-      {/* <Login/> */}
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/gamespage" element={<GamesPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
