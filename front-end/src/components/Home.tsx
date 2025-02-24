@@ -1,19 +1,10 @@
-import { useState } from "react";
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-import NewGameCard from "./NewGameCard";
-import EditGameCard from "./EditGameCard";
 
 export const Home = () => {
-  const [isNewGameOpen, setIsNewGameOpen] = useState(false);
-  const [isEditGameOpen, setIsEditGameOpen] = useState(false);
+
   const navigate = useNavigate();
-
-  const handleEditClick = () => {
-    setIsEditGameOpen(true);
-  };
-
   const handleLoginClick = () => {
     navigate("/login");
   };
@@ -49,15 +40,6 @@ export const Home = () => {
           </Text> */}
         </Box>
       </Box>
-
-      {/* <div>
-            <Button onClick={() => setIsNewGameOpen(true)}>Adicionar Novo Jogo</Button>
-            <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} />
-        </div>
-        <div>
-            <Button onClick={handleEditClick}>Editar</Button>
-            <EditGameCard isOpen={isEditGameOpen} setIsOpen={setIsEditGameOpen} />
-        </div> */}
     </>
   );
 };

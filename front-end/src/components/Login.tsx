@@ -2,7 +2,7 @@ import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
 import InputField from "./ui/InputField.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isEmail, hasMinLength } from "../validation/user-validation.ts";
+import { isEmail } from "../validation/user-validation.ts";
 import axios from "axios";
 
 interface FormState {
@@ -37,9 +37,6 @@ export const Login = () => {
     if (!isEmail(formData.email)) {
       errorMessages.email = "E-mail inválido";
     }
-    if (!hasMinLength(formData.password, 6)) {
-      errorMessages.password = "Senha incorreta.";
-    }
 
     setError(errorMessages);
     return Object.keys(errorMessages).length === 0;
@@ -57,14 +54,14 @@ export const Login = () => {
           navigate("/gamespage");
         })
         .catch((error) => {
-          if (error.response) {
-            setError({ ...error, auth: "E-mail ou senha incorretos." });
+          if(error.response.status === 401){
+            setError({ ...error, auth: "E-mail ou senha incorretos." })
           }
-          setError({ ...error, auth: "Falha ao realizar login." });
-        })
-        .finally(() => {
-          setIsLoading(false);
+          if (error.response.status === 404) {
+            setError({ ...error, auth: "Usuário não cadastrado." });
+          }
         });
+        setIsLoading(false);
     }
   }
 
@@ -103,12 +100,13 @@ export const Login = () => {
               value={formData.password}
               onChange={handleInputChange}
             />
-            {error.password && (
-              <Text color="red.500" fontSize="sm">
-                {error.password}
-              </Text>
-            )}
           </Box>
+
+          {error.auth && (
+            <Text color="red.500" fontSize="sm" mt={2}>
+              {error.auth}
+            </Text>
+          )}
 
           <Stack direction="row" justify="space-between" mt={4}>
             <Button variant="outline" onClick={handleSignupClick}>
