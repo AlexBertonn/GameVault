@@ -9,6 +9,7 @@ import {
   hasMinLength,
   isEqualToOtherValue,
 } from "../validation/user-validation.ts";
+import { Endpoints } from "@/constants/Endpoints.ts";
 
 interface FormState {
   name: string;
@@ -66,7 +67,7 @@ export const Signup = () => {
 
     if (validateFormData()) {
       try {
-        const response = await axios.post('http://localhost:8080/user', {
+        const response = await axios.post(Endpoints.login, {
           name: formData.name,
           email: formData.email,
           password: formData.password
