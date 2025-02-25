@@ -65,7 +65,7 @@ export const Signup = () => {
     event.preventDefault();
 
     if (validateFormData()) {
-      try{
+      try {
         const response = await axios.post('http://localhost:8080/user', {
           name: formData.name,
           email: formData.email,
@@ -73,7 +73,7 @@ export const Signup = () => {
         })
         console.log('Cadastrado:', response.data);
         navigate('/login')
-      } catch(errors){
+      } catch (errors) {
         console.error('Erro ao cadastrar:', errors);
         setError({
           ...error,

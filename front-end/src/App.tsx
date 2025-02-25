@@ -4,21 +4,25 @@ import Signup from "./components/Signup.tsx";
 import Login from "./components/Login.tsx";
 import Home from "./components/Home.tsx";
 import GamesPage from "./components/GamesPage.tsx";
-import EditGameCard from "./components/EditGameCard.tsx";
-import NewGameCard from "./components/NewGameCard.tsx";
+
+import { AuthProvider } from "./context/auth.tsx";
+import ProtectedRoute from "./ProtectedRoute.tsx";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/gamespage" element={<GamesPage />} />
-        {/* <Route path="/newgamecard" element={<NewGameCard />} />
-        <Route path="/editgamecard" element={<EditGameCard />} /> */}
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/games" element={<GamesPage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

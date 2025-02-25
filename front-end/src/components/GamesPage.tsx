@@ -4,8 +4,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NewGameCard from "./NewGameCard";
 import EditGameCard from "./EditGameCard";
+import { useAuth } from "@/context/auth";
 
 export const GamesPage = () => {
+
+  const { logout } = useAuth();
 
   const [isNewGameOpen, setIsNewGameOpen] = useState(false);
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
@@ -28,13 +31,15 @@ export const GamesPage = () => {
           <Heading size="6xl">Você está na tela de jogos!!</Heading>
         </Box>
 
-      <div>
-            <Button onClick={() => setIsNewGameOpen(true)}>Adicionar Novo Jogo</Button>
-            <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} />
+        <Button onClick={logout}>Deslogar</Button>
+
+        <div>
+          <Button onClick={() => setIsNewGameOpen(true)}>Adicionar Novo Jogo</Button>
+          <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} />
         </div>
         <div>
-            <Button onClick={handleEditClick}>Editar</Button>
-            <EditGameCard isOpen={isEditGameOpen} setIsOpen={setIsEditGameOpen} />
+          <Button onClick={handleEditClick}>Editar</Button>
+          <EditGameCard isOpen={isEditGameOpen} setIsOpen={setIsEditGameOpen} />
         </div>
 
       </Box>

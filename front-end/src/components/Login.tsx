@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isEmail } from "../validation/user-validation.ts";
 import axios from "axios";
+import { useAuth } from "@/context/auth.tsx";
 
 interface FormState {
   email: string;
@@ -11,6 +12,7 @@ interface FormState {
 }
 
 export const Login = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState<FormState>({
     email: "",
     password: "",
@@ -32,37 +34,23 @@ export const Login = () => {
     }));
   }
 
-  function validateFormData(): boolean {
-    const errorMessages: { [key: string]: string } = {};
-    if (!isEmail(formData.email)) {
-      errorMessages.email = "E-mail inválido";
-    }
-
-    setError(errorMessages);
-    return Object.keys(errorMessages).length === 0;
-  }
-
-  function handleSubmit(event: React.FormEvent) {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (validateFormData()) {
-      setIsLoading(true);
-      axios
-        .post("http://localhost:8080/auth/login", formData)
-        .then((response) => {
-          const { token } = response.data;
-          localStorage.setItem("token", token);
-          navigate("/gamespage");
-        })
-        .catch((error) => {
-          if(error.response.status === 401){
-            setError({ ...error, auth: "E-mail ou senha incorretos." })
-          }
-          if (error.response.status === 404) {
-            setError({ ...error, auth: "Usuário não cadastrado." });
-          }
-        });
+    setIsLoading(true);
+    login(formData).then(
+      () => {
+        navigate("/games");
+      },
+      (error) => {
+        if (error.response.status === 401) {
+          setError({ ...error, auth: "E-mail ou senha incorretos." });
+        }
+        if (error.response.status === 404) {
+          setError({ ...error, auth: "Usuário não cadastrado." });
+        }
         setIsLoading(false);
-    }
+      }
+    )
   }
 
   const navigate = useNavigate();
