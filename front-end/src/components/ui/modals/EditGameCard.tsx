@@ -1,5 +1,5 @@
-import CustomModal from "./ui/CustomModal";
-import InputField from "./ui/InputField";
+import CustomModal from "../CustomModal";
+import InputField from "../InputField";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,12 +13,12 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-type NewGameProps = {
-  isNewGameOpen: boolean,
-  setIsNewGameOpen: (value: boolean) => void;
-}
+type EditGameProps = {
+    isOpen: boolean,
+    setIsOpen: (value: boolean) => void;
+  }
 
-export const NewGameCard = ({isNewGameOpen, setIsNewGameOpen} : NewGameProps) => {
+export const EditGameCard = ({isOpen, setIsOpen} : EditGameProps) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -49,25 +49,25 @@ export const NewGameCard = ({isNewGameOpen, setIsNewGameOpen} : NewGameProps) =>
   };
 
   const onSubmit = handleSubmit((data) => {
-    console.log("Novo card criado:", { ...formData, rating: data.rating });
+    console.log("Card editado com Sucesso", { ...formData, rating: data.rating });
     handleClose();
   });
 
-  const handleClose = () => setIsNewGameOpen(false);
+  const handleClose = () => setIsOpen(false);
 
-  if(!isNewGameOpen) return null;
+  if(!isOpen) return null;
 
   return (
     <CustomModal
-      title="Adicinar Jogo"
-      message="Compartilhe sua experiência e não deixe de avaliar o game. "
+      title="Editar" //Depois tem que passar aqui concatenado o nome do jogo puxando da API, exemplo ${gameData.title} sei la kkk.
+      message="Altere os dados do card."
       onSubmit={onSubmit}
       onClose={handleClose}
       footerButtons={
         <>
-          <Button variant="outline" onClick={handleClose} >Cancelar</Button>
+          <Button variant="outline" onClick={handleClose}>Cancelar</Button>
           <Button variant="solid" onClick={onSubmit}>
-            Adicionar Jogo
+            Editar
           </Button>
         </>
       }
@@ -109,4 +109,4 @@ export const NewGameCard = ({isNewGameOpen, setIsNewGameOpen} : NewGameProps) =>
   );
 };
 
-export default NewGameCard;
+export default EditGameCard;

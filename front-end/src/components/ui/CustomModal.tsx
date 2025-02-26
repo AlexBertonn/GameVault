@@ -11,6 +11,11 @@ type ModalProps = {
 };
 
 export const CustomModal = ({ title, message, children, onSubmit, onClose, footerButtons }: ModalProps) => {
+
+  const handleSubmit = () => {
+    onSubmit();
+  }
+
   return (
     <Card.Root w="md">
       <Card.Header>
@@ -26,7 +31,7 @@ export const CustomModal = ({ title, message, children, onSubmit, onClose, foote
         {footerButtons || (
             <>
               <Button variant="outline" onClick={onClose}/>
-              <Button variant="solid" onClick={onSubmit} />
+              <Button variant="solid" onClick={handleSubmit} />
             </>
           )}
       </Card.Footer>

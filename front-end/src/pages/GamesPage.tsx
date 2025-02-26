@@ -2,8 +2,8 @@ import { Box, Heading } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NewGameCard from "./NewGameCard";
-import EditGameCard from "./EditGameCard";
+import NewGameCard from "../components/ui/modals/NewGameCard";
+import EditGameCard from "../components/ui/modals/EditGameCard";
 import { useAuth } from "@/context/auth";
 
 export const GamesPage = () => {
@@ -13,6 +13,12 @@ export const GamesPage = () => {
   const [isNewGameOpen, setIsNewGameOpen] = useState(false);
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
   const navigate = useNavigate();
+
+  const gameData = {
+    title: "",
+    description: "",
+    rating: 0,
+  };
 
   const handleEditClick = () => {
     setIsEditGameOpen(true);
@@ -35,7 +41,7 @@ export const GamesPage = () => {
 
         <div>
           <Button onClick={() => setIsNewGameOpen(true)}>Adicionar Novo Jogo</Button>
-          <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} />
+          <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} gameData={gameData}/>
         </div>
         <div>
           <Button onClick={handleEditClick}>Editar</Button>

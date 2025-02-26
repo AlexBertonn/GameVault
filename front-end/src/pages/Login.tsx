@@ -1,5 +1,5 @@
 import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
-import InputField from "./ui/InputField.tsx";
+import InputField from "../components/ui/InputField.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";

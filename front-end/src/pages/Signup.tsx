@@ -1,86 +1,43 @@
 import { Button, Box, Stack, Text, Flex, Heading } from "@chakra-ui/react";
-import InputField from "./ui/InputField.tsx";
+import InputField from "../components/ui/InputField.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  isEmail,
-  isNotEmpty,
-  hasMinLength,
-  isEqualToOtherValue,
-} from "../validation/user-validation.ts";
 import { Endpoints } from "@/constants/Endpoints.ts";
+import { useValidation } from "@/hooks/useValidation.ts";
 
-interface FormState {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 export const Signup = () => {
-  const [formData, setFormData] = useState<FormState>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
 
   const [error, setError] = useState<{ [key: string]: string }>({});
-
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-
-    setError((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
-  }
-
-  function validateFormData(): boolean {
-    const errorMessages: { [key: string]: string } = {};
-
-    if (!isNotEmpty(formData.name)) {
-      errorMessages.name = "Nome é obrigatório";
-    }
-    if (!isEmail(formData.email)) {
-      errorMessages.email = "E-mail inválido";
-    }
-    if (!hasMinLength(formData.password, 6)) {
-      errorMessages.password = "A senha deve ter pelo menos 6 caracteres";
-    }
-    if (!isEqualToOtherValue(formData.password, formData.confirmPassword)) {
-      errorMessages.confirmPassword = "As senhas não coincidem";
-    }
-
-    setError(errorMessages);
-
-    return Object.keys(errorMessages).length === 0;
-  }
+  const { validateFormData } = useValidation();
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
-    if (validateFormData()) {
+    const form = event.currentTarget as HTMLFormElement;
+    const data = {
+      name: form.nome.value,
+      email: form.email.value,
+      password: form.password.value,
+      confirmPassword: form.confirmPassword.value
+     } 
+     const errors = validateFormData(data);
+
+    if (Object.keys(errors).length === 0) {
       try {
-        const response = await axios.post(Endpoints.login, {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        })
+        const response = await axios.post(Endpoints.signup, data)
         console.log('Cadastrado:', response.data);
         navigate('/login')
       } catch (errors) {
         console.error('Erro ao cadastrar:', errors);
         setError({
           ...error,
-          email: 'Erro ao cadastrar, teste novamente.'
+          email: 'Erro ao cadastrar, tente novamente.'
         })
       }
+     } else {
+      setError(errors);
     }
   }
 
@@ -105,8 +62,7 @@ export const Signup = () => {
               label="Nome"
               id="name"
               type="text"
-              value={formData.name}
-              onChange={handleInputChange}
+              name="nome"
             />
             {error.name && (
               <Text color="red.500" fontSize="sm">
@@ -120,8 +76,7 @@ export const Signup = () => {
               label="E-mail"
               id="email"
               type="text"
-              value={formData.email}
-              onChange={handleInputChange}
+              name="email"
             />
             {error.email && (
               <Text color="red.500" fontSize="sm">
@@ -135,8 +90,7 @@ export const Signup = () => {
               label="Senha"
               id="password"
               type="password"
-              value={formData.password}
-              onChange={handleInputChange}
+              name="password"
             />
             {error.password && (
               <Text color="red.500" fontSize="sm">
@@ -150,8 +104,7 @@ export const Signup = () => {
               label="Confirme sua senha"
               id="confirmPassword"
               type="password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
+              name="confirmPassword"
             />
             {error.confirmPassword && (
               <Text color="red.500" fontSize="sm">
