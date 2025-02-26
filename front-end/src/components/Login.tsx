@@ -15,12 +15,13 @@ export const Login = () => {
     setIsLoading(true);
     setError(null);
 
-    const fromData = new FormData(event.target as HTMLFormElement);
-    const email = fromData.get("email") as string;
-    const password = fromData.get("password") as string;  
-
+    const form = event.currentTarget as HTMLFormElement;
+    const data = {
+      email: form.email.value,
+      password: form.password.value,
+    };
     try	{
-      await login({email, password});
+      await login(data);
       navigate("/games");
     } catch(error:any) {
         if (error.response.status === 401 || error.response.status === 404) {
@@ -28,6 +29,8 @@ export const Login = () => {
         } else {
           setError("Erro ao fazer login. Tente novamente mais tarde.");
         }
+      } finally {
+        setIsLoading(false);
       }
   }
   const navigate = useNavigate();
