@@ -2,57 +2,34 @@ import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
 import InputField from "./ui/InputField.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isEmail } from "../validation/user-validation.ts";
-import axios from "axios";
 import { useAuth } from "@/context/auth.tsx";
-
-interface FormState {
-  email: string;
-  password: string;
-}
 
 export const Login = () => {
   const { login } = useAuth();
-  const [formData, setFormData] = useState<FormState>({
-    email: "",
-    password: "",
-  });
 
-  const [error, setError] = useState<{ [key: string]: string }>({});
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-
-    setError((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
-  }
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-    login(formData).then(
-      () => {
-        navigate("/games");
-      },
-      (error) => {
-        if (error.response.status === 401) {
-          setError({ ...error, auth: "E-mail ou senha incorretos." });
-        }
-        if (error.response.status === 404) {
-          setError({ ...error, auth: "Usuário não cadastrado." });
-        }
-        setIsLoading(false);
-      }
-    )
-  }
+    setError(null);
 
+    const fromData = new FormData(event.target as HTMLFormElement);
+    const email = fromData.get("email") as string;
+    const password = fromData.get("password") as string;  
+
+    try	{
+      await login({email, password});
+      navigate("/games");
+    } catch(error:any) {
+        if (error.response.status === 401 || error.response.status === 404) {
+          setError("Credenciais inválidas. Verifique seu e-mail e senha e tente novamente." );
+        } else {
+          setError("Erro ao fazer login. Tente novamente mais tarde.");
+        }
+      }
+  }
   const navigate = useNavigate();
   const handleSignupClick = () => {
     navigate("/signup");
@@ -70,14 +47,8 @@ export const Login = () => {
               label="E-mail"
               id="email"
               type="email"
-              value={formData.email}
-              onChange={handleInputChange}
+              name="email"
             />
-            {error.email && (
-              <Text color="red.500" fontSize="sm">
-                {error.email}
-              </Text>
-            )}
           </Box>
 
           <Box textAlign="left">
@@ -85,14 +56,13 @@ export const Login = () => {
               label="Senha"
               id="password"
               type="password"
-              value={formData.password}
-              onChange={handleInputChange}
+              name="password"
             />
           </Box>
 
-          {error.auth && (
+          {error && (
             <Text color="red.500" fontSize="sm" mt={2}>
-              {error.auth}
+              {error}
             </Text>
           )}
 

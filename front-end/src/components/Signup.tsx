@@ -87,7 +87,7 @@ export const Signup = () => {
   //ROTAS AQUI
   const navigate = useNavigate();
   const handleCancelClick = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   return (
