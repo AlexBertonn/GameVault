@@ -1,14 +1,18 @@
 import { Box, Heading } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NewGameCard from "../components/ui/modals/NewGameCard";
 import EditGameCard from "../components/ui/modals/EditGameCard";
 import { useAuth } from "@/context/auth";
+import { fetchGamesByUser } from "@/api/games";
+import { IGame } from "@/types/games";
 
-export const GamesPage = () => {
+export const Games = () => {
 
-  const { logout } = useAuth();
+  const { logout, userId } = useAuth();
+
+  const [games, setGames] = useState([]);
 
   const [isNewGameOpen, setIsNewGameOpen] = useState(false);
   const [isEditGameOpen, setIsEditGameOpen] = useState(false);
@@ -23,6 +27,16 @@ export const GamesPage = () => {
   const handleEditClick = () => {
     setIsEditGameOpen(true);
   };
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      if (userId) {
+        const response = await fetchGamesByUser(userId);
+        setGames(response);
+      }
+    }
+    fetchGames();
+  }, [])
 
   return (
     <>
@@ -41,16 +55,27 @@ export const GamesPage = () => {
 
         <div>
           <Button onClick={() => setIsNewGameOpen(true)}>Adicionar Novo Jogo</Button>
-          <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} gameData={gameData}/>
+          <NewGameCard isNewGameOpen={isNewGameOpen} setIsNewGameOpen={setIsNewGameOpen} gameData={gameData} />
         </div>
         <div>
           <Button onClick={handleEditClick}>Editar</Button>
           <EditGameCard isOpen={isEditGameOpen} setIsOpen={setIsEditGameOpen} />
         </div>
 
+        {
+          games.map((game: IGame) => (
+            <Box key={game.id}>
+              <img src={game.image} alt={game.name} />
+              <Heading>{game.name}</Heading>
+              <p>{game.description}</p>
+              <p>{game.rating}</p>
+            </Box>
+          ))
+        }
+
       </Box>
     </>
   );
 };
 
-export default GamesPage;
+export default Games;

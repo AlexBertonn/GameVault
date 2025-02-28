@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Signup from "./pages/Signup.tsx";
 import Login from "./pages/Login.tsx";
 import Home from "./pages/Home.tsx";
-import GamesPage from "./pages/GamesPage.tsx";
+import Games from "./pages/Games.tsx";
 
 import { AuthProvider } from "./context/auth.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
@@ -18,7 +18,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/games" element={<GamesPage />} />
+            <Route path="/games" element={<Games />} />
           </Route>
         </Routes>
       </Router>
