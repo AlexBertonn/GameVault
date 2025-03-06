@@ -1,28 +1,33 @@
 import { Button, Card, Image } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate()
-const handleEdit = () =>{
-    navigate('/editgamecard')
+
+
+interface GameCardProps {
+  id: string;
+  name: string;
+  description: string;
+  rating: number;
+  image: string;
+  onClick: () => void;
 }
 
-const GameCard = () => {
+const GameCard = ({id, name, description, rating, image, onClick}: GameCardProps) => {
   return (
-    <Card.Root maxW="sm" overflow="hidden">
-      <Image
-        src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-        alt="Green double couch with wooden legs"
-      />
+    <Card.Root maxW="sm"  overflow="hidden" id={id}>
+      <Image src={image} alt={name} w='300px' h='300px' />
       <Card.Body gap="2">
-        <Card.Title>Living room Sofa</Card.Title>
+        <Card.Title>{name}</Card.Title>
         <Card.Description>
-          This sofa is perfect for modern tropical spaces, baroque inspired
-          spaces.
+          {description}
         </Card.Description>
+        <div>
+          <label>Avaliação</label>
+          <p>{rating}</p>
+        </div>
       </Card.Body>
       <Card.Footer gap="2">
-        <Button variant="solid" onClick={handleEdit}>Edit</Button>
-        <Button variant="ghost">Add to cart</Button>
+        <Button variant="solid" onClick={onClick}>Edit</Button>
       </Card.Footer>
     </Card.Root>
   )
