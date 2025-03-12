@@ -1,7 +1,4 @@
 import { Button, Card, Image } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-
-
 
 interface GameCardProps {
   id: string;
@@ -10,9 +7,10 @@ interface GameCardProps {
   rating: number;
   image: string;
   onClick: () => void;
+  deleteGame: () => void;
 }
 
-const GameCard = ({id, name, description, rating, image, onClick}: GameCardProps) => {
+const GameCard = ({id, name, description, rating, image, onClick, deleteGame}: GameCardProps) => {
   return (
     <Card.Root maxW="sm"  overflow="hidden" id={id}>
       <Image src={image} alt={name} w='300px' h='300px' />
@@ -28,6 +26,7 @@ const GameCard = ({id, name, description, rating, image, onClick}: GameCardProps
       </Card.Body>
       <Card.Footer gap="2">
         <Button variant="solid" onClick={onClick}>Edit</Button>
+        <Button variant="outline" colorPalette="red" onClick={deleteGame}>Delete</Button>
       </Card.Footer>
     </Card.Root>
   )

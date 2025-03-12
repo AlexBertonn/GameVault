@@ -1,111 +1,111 @@
-import CustomModal from "../CustomModal";
-import InputField from "../InputField";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Rating } from "@/components/ui/rating";
-import { Field } from "@/components/ui/field";
-import { Button } from "@chakra-ui/react";
+import { Button, Card, Stack, Box, Input } from "@chakra-ui/react";
+import { NumberInputField, NumberInputRoot } from "@/components/ui/number-input";
+import { Endpoints } from "@/constants/Endpoints.ts";
 
-const formSchema = z.object({
-  rating: z.number({ required_error: "Rating is required" }).min(1).max(5),
-});
+type NewGameProps = {
+  isEditGameOpen: boolean;
+  setIsEditGameOpen: (value: boolean) => void;
+  gameData: { name: string; description: string; rating: number; image: string; id: string };
+  userId: string | null;
+};
 
-type FormValues = z.infer<typeof formSchema>;
-type EditGameProps = {
-    isOpen: boolean,
-    setIsOpen: (value: boolean) => void;
-  }
+export const EditGameCard = ({
+  isEditGameOpen,
+  setIsEditGameOpen,
+  gameData,
+}: NewGameProps) => {
 
-export const EditGameCard = ({isOpen, setIsOpen} : EditGameProps) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    rating: 0, 
-  });
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-  const {
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
+    const form = event.currentTarget as HTMLFormElement;
+    const data = {
+      id: gameData.id,
+      name: form.names.value,
+      description: form.description.value,
+      rating: Number(form.rating.value),
+      image: form.image.value,
+    };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    try{
+      const response = await fetch(Endpoints.edit(data.id), {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if(response.ok){
+          console.log('Editad com sucesso:', data);
+          handleClose();
+      }
+
+      if (!response.ok) {
+        console.error("Erro ao editar card:", response.statusText);
+        return;
+      }
+    } catch (error) {
+      console.error("Erro ao editar card:", error);
+    }
   };
 
-  const handleRatingChange = (value: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      rating: value,
-    }));
-  };
+  const handleClose = () => setIsEditGameOpen(false);
 
-  const onSubmit = handleSubmit((data) => {
-    console.log("Card editado com Sucesso", { ...formData, rating: data.rating });
-    handleClose();
-  });
-
-  const handleClose = () => setIsOpen(false);
-
-  if(!isOpen) return null;
+  if (!isEditGameOpen) return null;
 
   return (
-    <CustomModal
-      title="Editar" //Depois tem que passar aqui concatenado o nome do jogo puxando da API, exemplo ${gameData.title} sei la kkk.
-      message="Altere os dados do card."
-      onSubmit={onSubmit}
-      onClose={handleClose}
-      footerButtons={
-        <>
-          <Button variant="outline" onClick={handleClose}>Cancelar</Button>
-          <Button variant="solid" onClick={onSubmit}>
-            Editar
-          </Button>
-        </>
-      }
-      
-    >
-      <InputField
-        label="Nome do Jogo"
-        id="game-title"
-        name="title"
-        value={formData.title}
-        onChange={handleInputChange}
-      />
-      <InputField
-        label="Descrição"
-        id="game-description"
-        name="description"
-        value={formData.description}
-        onChange={handleInputChange}
-      />
-      
-      
-      <Field label="Avaliação" invalid={!!errors.rating} errorText={errors.rating?.message}>
-        <Controller
-          control={control}
-          name="rating"
-          render={({ field }) => (
-            <Rating
-              name={field.name}
-              value={formData.rating}  
-              onValueChange={({ value }) => {
-                field.onChange(value);
-                handleRatingChange(value); 
-              }}
-            />
-          )}
-        />
-      </Field>
-    </CustomModal>
+    <Card.Root w="md" style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+      <Card.Header>
+        <Card.Title>Editar Jogo</Card.Title>
+      </Card.Header>
+      <Card.Body>
+        <Stack gap="4" w="full">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Box gap='1' display='flex' flexDirection='column'>
+              <label> Imagem URL</label>
+                <Input
+                  id="image"
+                  name="image"
+                  defaultValue={gameData.image}
+                />
+              </Box>
+            <Box gap='1' display='flex' flexDirection='column'>
+              <label> Nome do jogo</label>
+                <Input
+                  id="name"
+                  name="names"
+                  defaultValue={gameData.name}
+                />
+              </Box>
+              <Box gap='1' display='flex' flexDirection='column'>
+                  <label> Descrição</label>
+                  <Input
+                    id="description"
+                    name="description"
+                    defaultValue={gameData.description}
+                    />
+              </Box>
+                <NumberInputRoot
+                  name="rating"
+                  defaultValue={gameData.rating}
+                  width="200px"
+                  min={1}
+                  max={5}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              
+
+            <Box display='flex' justifyContent="flex-end" gap={2}>
+              <Button variant="outline" onClick={handleClose}>Cancelar</Button>
+              <Button variant="solid" type="submit">Salvar</Button>
+            </Box>
+          </form>
+        </Stack>
+      </Card.Body>
+    </Card.Root>
   );
 };
 
