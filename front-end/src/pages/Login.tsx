@@ -1,5 +1,6 @@
-import { Button, Stack, Text, Flex, Box, Heading } from "@chakra-ui/react";
+import { Button, Stack, Text, Flex, Box, Heading, CloseButton} from "@chakra-ui/react";
 import InputField from "../components/ui/InputField.tsx";
+import InputFieldPassword from "../components/ui/InputFieldPassword.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
@@ -37,10 +38,17 @@ export const Login = () => {
   const handleSignupClick = () => {
     navigate("/signup");
   };
+  const handleClose = () => { 
+    navigate("/");
+  }
 
   return (
     <Flex minH="100vh" align="center" justify="center">
-      <Box p={8} boxShadow="sm" borderRadius="md" w="md" bg="#141414">
+      <Box boxShadow="sm" borderRadius="md" w="md" bg="#141414">
+        <Flex justifyContent={"right"} mr={2} mt={2} colorPalette={"gray"}>
+          <CloseButton variant="ghost" size='sm' onClick={handleClose} />
+        </Flex>
+      <Box  p={8} pt={1}>
         <Heading size="lg" textAlign="left" mb={6}>
           Login
         </Heading>
@@ -55,7 +63,7 @@ export const Login = () => {
           </Box>
 
           <Box textAlign="left">
-            <InputField
+            <InputFieldPassword
               label="Senha"
               id="password"
               type="password"
@@ -69,7 +77,7 @@ export const Login = () => {
             </Text>
           )}
 
-          <Stack direction="row" justify="space-between" mt={4}>
+          <Stack direction="row" mt={4} justifyContent="right">
             <Button variant="outline" onClick={handleSignupClick}>
               Registrar-se
             </Button>
@@ -83,7 +91,7 @@ export const Login = () => {
             </Button>
           </Stack>
         </Stack>
-      </Box>
+      </Box></Box>
     </Flex>
   );
 };

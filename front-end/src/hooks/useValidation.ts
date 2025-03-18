@@ -28,9 +28,6 @@ export function useValidation() {
     if (!hasMinLength(formData.password, 6)) {
       errors.password = "A senha deve ter pelo menos 6 caracteres.";
     }
-    if (!isEqualToOtherValue(formData.password, formData.confirmPassword)) {
-      errors.confirmPassword = "As senhas não coincidem.";
-    }
 
     return errors;
   };

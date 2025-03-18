@@ -1,5 +1,6 @@
 import { Button, Box, Stack, Text, Flex, Heading } from "@chakra-ui/react";
 import InputField from "../components/ui/InputField.tsx";
+import InputFieldPassword from "../components/ui/InputFieldPassword.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,16 +18,16 @@ export const Signup = () => {
 
     const form = event.currentTarget as HTMLFormElement;
     const data = {
-      name: form.nome.value,
+      name: form.names.value,
       email: form.email.value,
       password: form.password.value,
-      confirmPassword: form.confirmPassword.value
      } 
      const errors = validateFormData(data);
+     
 
     if (Object.keys(errors).length === 0) {
       try {
-        const response = await axios.post(Endpoints.signup, data)
+        const response = await axios({method: 'post', url: Endpoints.signup, data: data});
         console.log('Cadastrado:', response.data);
         navigate('/login')
       } catch (errors) {
@@ -34,7 +35,7 @@ export const Signup = () => {
         setError({
           ...error,
           email: 'Erro ao cadastrar, tente novamente.'
-        })
+        });
       }
      } else {
       setError(errors);
@@ -62,7 +63,7 @@ export const Signup = () => {
               label="Nome"
               id="name"
               type="text"
-              name="nome"
+              name="names"
             />
             {error.name && (
               <Text color="red.500" fontSize="sm">
@@ -86,7 +87,7 @@ export const Signup = () => {
           </Box>
 
           <Box textAlign="left">
-            <InputField
+            <InputFieldPassword
               label="Senha"
               id="password"
               type="password"
@@ -99,21 +100,7 @@ export const Signup = () => {
             )}
           </Box>
 
-          <Box textAlign="left">
-            <InputField
-              label="Confirme sua senha"
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-            />
-            {error.confirmPassword && (
-              <Text color="red.500" fontSize="sm">
-                {error.confirmPassword}
-              </Text>
-            )}
-          </Box>
-
-          <Stack direction="row" justify="space-between" mt={4}>
+          <Stack direction="row" justify="right" mt={4}>
             <Button
               variant="outline"
               colorScheme="teal"

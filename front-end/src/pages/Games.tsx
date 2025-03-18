@@ -57,7 +57,7 @@ export const Games = () => {
   }, []);
 
   return (
-      <Box w="100vw" h="100vh" position="relative" bg="black">
+      <Box w="100%" h="100%" position="relative" bg="black">
         {isNewGameOpen && 
           <Box bg={"rgba(0, 0, 0, 0.87)"} position="fixed" w="100vw" h="100vh" zIndex="9999">
             <NewGameCard
@@ -113,8 +113,8 @@ export const Games = () => {
           gap="10"
           alignItems="center"
           justifyContent="center"
-          h="100%"
-          flexWrap="wrap"	
+          flexWrap="wrap"		
+          padding="100px"	
           >
           {games.map((game: IGame) => {
             return (
